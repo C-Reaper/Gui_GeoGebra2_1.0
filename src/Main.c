@@ -4,7 +4,7 @@
 
 
 float Function_1D(float x){
-	return sinf(x);
+	return x * sinf(x);
 }
 
 TransformedView tv;
@@ -55,7 +55,7 @@ void Delete(AlxWindow* w){
 }
 
 int main(){
-    if(Create("Geogebra 1.0",2500,1200,1,1,Setup,Update,Delete))
+    if(Create("Geogebra 2.1",2500,1200,1,1,Setup,Update,Delete))
         Start();
     return 0;
 }
