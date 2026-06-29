@@ -42,12 +42,9 @@ void Update(AlxWindow* w){
 
 	Vec2 PosBefore = {};
 	for(int i = 0;i<GetWidth();i++){
-		Vec2 Pos = { i,0.0f };
-		
-		float x = TransformedView_ScreenWorldX(&tv,i);
-		float y = Function_1D(x);
-
-		Pos.y = TransformedView_WorldScreenY(&tv,-y);
+		const float x = TransformedView_ScreenWorldX(&tv,i);
+		const float y = Function_1D(x);
+		const Vec2 Pos = { i,TransformedView_WorldScreenY(&tv,-y) };
 		
 		RenderLine(PosBefore,Pos,RED,1.0f);
 		PosBefore = Pos;
