@@ -3,11 +3,14 @@
 #include "/home/codeleaded/System/Static/Library/TransformedView.h"
 
 
-float Function_1D(float x){
-	return x * sinf(x);
-}
-
+float lambda = 0.0f;
 TransformedView tv;
+
+float Function_1D(float x){
+	//return x * sinf(x);
+	//return F32_SMax(0.001f * x * x,sinf(x),lambda);
+	return expf(lambda * logf(x));
+}
 
 void Setup(AlxWindow* w){
 	tv = TransformedView_New((Vec2){ GetWidth(),GetHeight() });
@@ -15,6 +18,12 @@ void Setup(AlxWindow* w){
 
 void Update(AlxWindow* w){
 	TransformedView_HandlePanZoom(&tv,window.Strokes,GetMouse());
+
+	if(Stroke(ALX_KEY_UP).DOWN){
+		lambda += 1.0f * w->ElapsedTime;
+	}else if(Stroke(ALX_KEY_DOWN).DOWN){
+		lambda -= 1.0f * w->ElapsedTime;
+	}
 
 	Clear(BLACK);
 
@@ -45,9 +54,8 @@ void Update(AlxWindow* w){
 	}
 
 	Vec2 p = TransformedView_ScreenWorldPos(&tv,GetMouse());
-	String str = String_Format("P: X: %f, Y: %f",p.x,p.y);
-	RenderCStrSize(str.Memory,str.size,0.0f,0.0f,WHITE);
-	String_Free(&str);
+	CStr_RenderAlxFontf(WINDOW_STD_ARGS,GetAlxFont(),0.0f,0.0f,WHITE,"P: X: %f, Y: %f",p.x,p.y);
+	CStr_RenderAlxFontf(WINDOW_STD_ARGS,GetAlxFont(),0.0f,GetAlxFont()->CharSizeY,WHITE,"Lambda: %f",lambda);
 }
 
 void Delete(AlxWindow* w){
