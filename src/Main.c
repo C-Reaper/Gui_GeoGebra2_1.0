@@ -25,7 +25,7 @@ float Function_1D(float x){
 DynPlotter plotter;
 float lambda = 0.0f;
 
-float Lagrange_Yi(int i,float x){
+static float Lagrange_Yi(int i,float x){
 	const Vec2 points_i = *(Vec2*)Vector_Get(&plotter.points,i);
 
 	float p = 1.0f;
@@ -38,19 +38,19 @@ float Lagrange_Yi(int i,float x){
 	}
 	return p * points_i.y;
 }
-float Function0(float x){
+static float Function0(float x){
 	return x * expf(x);
 }
-float Function1(float x){
+static float Function1(float x){
 	return x;
 }
-float Function2(float x){
+static float Function2(float x){
 	return Math_Nw_LambertW_0(x);
 }
-float Function3(float x){
+static float Function3(float x){
 	return Math_Hy_LambertW_0(x);
 }
-float Function4(float x){
+static float Function4(float x){
 	float p = 0.0f;
 	for(int i = 0;i<plotter.points.size;i++){
 		p += Lagrange_Yi(i,x);
@@ -58,10 +58,10 @@ float Function4(float x){
 	return p;
 }
 
-void Setup(AlxWindow* w){
+static void Setup(AlxWindow* w){
 	plotter = DynPlotter_New(Rect_New(
-		(Vec2){ 100.0f,100.0f },
-		(Vec2){ GetWidth() - 200.0f,GetHeight() - 200.0f }
+		(Vec2){ 10.0f,10.0f },
+		(Vec2){ GetWidth() - 20.0f,GetHeight() - 20.0f }
 	));
 
 	//DynPlotter_Add_Fn(&plotter,(DynPlotter_Function){ Function0,GREEN });
@@ -70,9 +70,10 @@ void Setup(AlxWindow* w){
 	//DynPlotter_Add_Fn(&plotter,(DynPlotter_Function){ Function3,YELLOW });
 	DynPlotter_Add_Fn(&plotter,(DynPlotter_Function){ Function4,CYAN });
 }
-void Update(AlxWindow* w){
+static void Update(AlxWindow* w){
 	DynPlotter_Update(&plotter,w->Strokes,GetMouse());
-	const Vec2 wm = DynPlotter_ToWorld(&plotter,GetMouse());
+	plotter.box.d.x = w->Width - 20.0f;
+	plotter.box.d.y = w->Height - 20.0f;
 
     if(Stroke(ALX_KEY_UP).DOWN){
 		lambda += 1.0f * w->ElapsedTime;
@@ -81,13 +82,13 @@ void Update(AlxWindow* w){
 	}
 
 	Clear(BLUE);
-
 	DynPlotter_Render(&plotter,WINDOW_STD_ARGS);
 
+	const Vec2 wm = DynPlotter_ToWorld(&plotter,GetMouse());
 	CStr_RenderAlxFontf(WINDOW_STD_ARGS,GetAlxFont(),0.0f,0.0f,WHITE,"P: X: %f, Y: %f",wm.x,wm.y);
 	CStr_RenderAlxFontf(WINDOW_STD_ARGS,GetAlxFont(),0.0f,GetAlxFont()->CharSizeY,WHITE,"Lambda: %f",lambda);
 }
-void Delete(AlxWindow* w){
+static void Delete(AlxWindow* w){
 	DynPlotter_Free(&plotter);
 }
 
